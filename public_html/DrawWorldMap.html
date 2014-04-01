@@ -186,9 +186,106 @@
 {"Record Number":9064,"Project Title":"Germany | Standards for Bicycle Lights","Country(s)":"Germany","Status":"Closed","Case Initiated Date":"12/24/2012","Case Address: Street 1":"300 Cannery Row          ","Case Address: Zip":"93940-1437","Case Address: State":"CA","Industry/Sectors":"Consumer goods","SME Involved":"Yes","Issue(s)":"Standards","Relevant Agreement":"Yes","Trade Agreement(s)":"WTO: Multilateral Agreements on Trade in Goods - Technical Barriers","Case Value (in $ millions)":0,"Explanation":"unknown","Date Closed":"7/21/2014","Success":"FALSE","Publicity Permission":"Not Appropriate"}];
 	</script>
 	
+	
+	<script>
+	var successFilter = true;
+	var dateInitiateFilter; // check date format
+	var dateCloseFilter;
+	var smeFilter = true;
+	var countryFilter;
+	var industryFilter; // how about multiple industries selected? split by ','?
+	var issueFilter; // String.contains("issueFilter")?  how about multiple issues? how to categorize issues?
+	var publicityPermissionFilter; // String
+	var ftaFilter; // FTA / Free Trade Agreement, check the 
+	var wtoFilter; // deal with WTO & FTA OR/AND, check the meaning in UI
+	var valueFilter; // only list case value higher than filter?
+	var affectedEmployeeFilter // which attribute?
+	var usOnlyMapFilter; // only show us map
+	
+	
+	</script>
 	<script>
     var mapCtyRec = new HashMap();
     for (var record in data) {
+	
+	  // success filter section
+	  if (successFilter != null) { // null or undefined
+	    if (successFilter === true && data[record]["Success"] === "FALSE") {
+			continue;
+		} else if (successFilter === false && data[record]["Success"] === "TRUE") {
+			continue;
+		}
+	  }  
+	  document.write(data[record]["Record Number"] + ": " + data[record]["Country(s)"] + ", " + data[record]["Success"] + "<br>");
+	  
+	  // case date initiate filter section
+	  // case date close filter section
+	  
+	  // sme involved filter section
+	  if (smeFilter != null) {
+		if (smeFilter === true && data[record]["SME Involved"] === "No") {
+			continue;
+		} else if (smeFilter === false && data[record]["SME Involved"] === "Yes") {
+			continue;
+		}
+	  }
+	  document.write(data[record]["Record Number"] + ": " + data[record]["Country(s)"] + ", " + data[record]["Success"] + ", " + data[record]["SME Involved"] + "<br>");
+	  
+	  
+	  // industry filter section
+	  if (smeFilter != null) {
+		// how about multiple industries selected? split by ','?
+	  }
+	  
+	  // publicity permission filter section
+	  if (publicityPermissionFilter != null) {
+		if (data[record]["Publicity Permission"] != publicityPermissionFilter) {
+			continue;
+		}
+	  }
+	  
+	  
+	  // FTA relevant filter
+	  if (ftaFilter != null) {
+		var str = data[record]["Trade Agreement(s)"];
+		if (ftaFilter === true) {
+			if (str.indexOf("FTA") < 0 && str.indexOf("Free Trade Agreement") < 0) {
+				continue;
+			}
+		} else if (ftaFilter === false) {
+			if (str.indexOf("FTA") >= 0 || str.indexOf("Free Trade Agreement") >= 0) {
+				continue;
+			}
+		}
+	  }
+	  
+	  
+	  //WTO relevant filter
+	  if (wtoFilter != null) {
+		var str = data[record]["Trade Agreement(s)"];
+		if (wtoFilter === true) {
+			if (str.indexOf("WTO") < 0 && str.indexOf("World Trade Agreement") < 0) {
+				continue;
+			}
+		} else if (wtoFilter === false) {
+			if (str.indexOf("WTO") >= 0 || str.indexOf("World Trade Agreement") >= 0) {
+				continue;
+			}
+		}
+	  }
+	  
+	  
+	  // dollar value of success filter
+	  if (valueFilter != null) {
+		if (data[record]["Case Value (in $ millions)"] < valueFilter) {
+			continue;
+		}
+	  }
+	  
+	  
+	  
+	  
+	  
       var country = data[record]["Country(s)"];
 	  if (country.indexOf(",") < 0) {
 		if (mapCtyRec.containsKey(country)) {
@@ -967,7 +1064,7 @@
   <script src="d3.min.js"></script>
   <script src="topojson.v1.min.js"></script>
   <script src="datamaps.all.min.js"></script>
-  <div id="container" style="position: relative; width: 1500px; max-height: 900px;"></div>
+  <div id="container" style="position: relative; width: 1000px; max-height: 600px;"></div>
   
   <script>
 	var myObj = {};
@@ -975,7 +1072,7 @@
       myObj[mapkeys[i]] = {}
       if (mapForDataMap.get(mapkeys[i]) > 10) {
         myObj[mapkeys[i]]["fillKey"] = 'HIGH';
-      } else if (mapForDataMap.get(mapkeys[i]) > 5) {
+      } else if (mapForDataMap.get(mapkeys[i]) >= 5) {
         myObj[mapkeys[i]]["fillKey"] = 'MEDIUM';
       } else {
         myObj[mapkeys[i]]["fillKey"] = 'LOW';
@@ -1005,7 +1102,20 @@
             }
         }
     });
-	 map.legend();
-     </script>	 
+	 //map.legend();
+     </script>
+	 
+	 <script>
+//	 document.write(typeof map + "<br>");
+//	 for ( var prop in map ) {
+		//document.writeln( "map: " + prop + "<br>");
+//	 }
+	 
+//	 document.write("typeof myObj: " + typeof myObj + "<br>");
+//	 for ( var prop in myObj ) {
+//		document.writeln( "myObj: " + prop + "<br>");
+//	 }
+	 </script>
 </body>
+
 </html>
